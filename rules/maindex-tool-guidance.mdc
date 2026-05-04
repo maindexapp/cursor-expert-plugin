@@ -1,0 +1,83 @@
+---
+description: Quick reference for choosing the right Maindex tool
+alwaysApply: false
+---
+
+Use this reference to pick the right Maindex Expert tool for the task.
+
+## Decision Tree
+
+**Storing knowledge:**
+
+| Goal | Tool |
+|---|---|
+| Save a single memory | `memory.keep` |
+| Save many memories at once (up to 100) | `memory.bulk_keep` |
+| Replace an outdated memory with a corrected version | `memory.supersede` |
+| Append to or revise an existing memory | `memory.update` |
+
+**Retrieving knowledge:**
+
+| Goal | Tool |
+|---|---|
+| Find memories by meaning, keywords, or concepts | `memory.search` |
+| List memories filtered by tags, kind, collection, date, etc. | `memory.list` |
+| Get one specific memory by ID | `memory.recall` |
+| Find memories connected by links, shared tags, or collections | `memory.get_related` |
+
+**Organizing knowledge:**
+
+| Goal | Tool |
+|---|---|
+| Create typed links between memories | `memory.associate` |
+| Create, update, or manage a collection | `collection.manage` |
+| Batch add/remove tags, set canon status, manage collections | `memory.bulk_update` |
+| Soft-delete a memory | `memory.forget` |
+
+**Resources (read-only context):**
+
+| Resource | What it provides |
+|---|---|
+| `memory://tags` | All tags for your account |
+| `memory://collections` | All collections with hierarchy and member counts |
+| `memory://recent` | Most recently updated memories |
+| `memory://relation-types` | Available relation types with descriptions and inverses |
+| `memory://sessions` | Recent interaction sessions |
+
+## Tool Details
+
+### memory.keep
+Create a new memory. Always provide a `headline`. Optionally include `body`, `kind`, `canon_status`, `tags`, `collections`, `conversations`, `confidence`, and inline `links`. Not idempotent — calling twice creates two memories.
+
+### memory.search
+Full-text and semantic search. Supports `search_strategy`: `auto` (default, best available), `lexical`, `semantic`, or `hybrid`. Filters: `tags`, `kind`, `canon_status`, `collection`, `confidence` range, `verification_status`. Returns relevance-ranked results with match context.
+
+### memory.list
+Structured list/filter. Same filters as search but no free-text query. Use for browsing by criteria: "show me all accepted facts tagged domain:auth" or "list memories in collection my-project updated this week."
+
+### memory.recall
+Get a single memory by UUID or short ID. Optionally include `revisions` and `links`.
+
+### memory.associate
+Create typed links from one memory to one or more targets. Specify `relation_type` and optional `weight`. Inverse links are auto-created for known types (e.g. `supports` creates `supported_by` on the target).
+
+### memory.get_related
+Discover connections. Provide `memory_id`, `tags`, or `collection` — at least one is required. Optionally filter by `relation_type`.
+
+### collection.manage
+Multi-action tool. Actions: `create`, `update`, `delete`, `add_members`, `remove_members`, `list`, `get`. Collections have `name`, `slug`, `description`, `icon`, `color`, and support nesting via `parent_id`.
+
+### memory.supersede
+Atomic replace: creates the new memory, marks the old one `deprecated` with `superseded_by` pointer, and creates a `supersedes` link. Use instead of delete-and-recreate.
+
+### memory.update
+Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only`. Tags and conversations are additive. Full revision history is preserved.
+
+### memory.bulk_keep
+Create up to 100 memories with shared defaults. Per-item `tags` and `collections` merge with defaults. Auto-links batch members with `mentioned_with` unless `auto_link: false`.
+
+### memory.bulk_update
+Batch operations on up to 100 memories: `add_tags`, `remove_tags`, `set_canon_status`, `set_verification_status`, `add_to_collections`, `remove_from_collections`, `merge_metadata`, `add_links`, `forget`.
+
+### memory.forget
+Soft-delete (sets status to `deleted`). Restorable. Idempotent.

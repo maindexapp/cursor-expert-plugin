@@ -1,0 +1,75 @@
+---
+description: Best practices for storing, organizing, and retrieving memories in Maindex
+alwaysApply: true
+---
+
+When using Maindex MCP tools, follow these conventions for a well-structured knowledge graph.
+
+## Tagging
+
+- Use **faceted tags** for structured categorization: `domain:physics`, `project:my-app`, `function:premise`, `status:blocked`, `topic:authentication`.
+- Keep tags lowercase and hyphenated: `project:grid-trader`, not `project:Grid Trader`.
+- Reuse existing tags. Before inventing a new tag, search for similar ones.
+
+## Canon Status
+
+Set `canon_status` intentionally — it controls how much weight a memory carries:
+
+| Status | When to use |
+|---|---|
+| `draft` | Work-in-progress, unvalidated thoughts, initial captures |
+| `proposed` | Ideas or facts awaiting review or confirmation |
+| `accepted` | Confirmed knowledge, verified decisions, established facts |
+| `deprecated` | Outdated information — superseded or no longer relevant |
+| `alternative` | Valid but not chosen — rejected options, alternate approaches |
+| `meta` | Personal preferences, workflow notes, agent configuration |
+
+## Memory Kinds
+
+Choose the most specific `kind` for each memory:
+
+- `note` — general-purpose capture
+- `fact` — verified or externally sourced information
+- `idea` — speculative, creative, or exploratory
+- `decision` — a choice that was made, with rationale
+- `constraint` — a hard requirement or limitation
+- `question` — an open question to resolve later
+- `summary` — a condensed overview of other content
+- `artifact` — code snippets, configs, templates
+- `task_context` — background for an ongoing task
+
+## Conversations
+
+Include `conversations` when storing memories during a chat session or task. This groups related memories and enables retrieval by conversation context later.
+
+## Short IDs
+
+Maindex returns both `id` (UUID) and `shortId` (e.g. `mem-1jc4`) for every memory. Prefer short IDs in conversation — they are human-readable and token-efficient. Both formats are accepted everywhere.
+
+## Superseding, Not Deleting
+
+When a fact or decision changes, supersede rather than deleting and recreating. Superseding preserves the history chain: the old memory is marked `deprecated` with a `superseded_by` pointer, and a `supersedes` link is created automatically.
+
+## Collections
+
+Group related memories into collections for project-level organization. A memory can belong to multiple collections.
+
+## Linking
+
+Create typed associations between memories. Use specific relation types:
+
+- `supports` / `contradicts` — for evidence relationships
+- `depends_on` — for prerequisites
+- `expands` — for elaborations
+- `derived_from` — for provenance
+- `example_of` — for concrete instances
+- `belongs_to` — for parent-child hierarchies
+- `alternative_to` — for sibling variants
+
+Inverse links are created automatically for known types.
+
+## Search vs. Recall
+
+- Use **search** when looking for something **by meaning** — it cascades through full-text, fuzzy, semantic, and hybrid retrieval.
+- Use **list/recall** when filtering by **structured criteria** — tags, kind, canon status, collection, date range, confidence.
+- Use **recall by ID** when you have a **specific ID**.
