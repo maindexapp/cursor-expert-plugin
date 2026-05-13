@@ -11,28 +11,35 @@ Use this reference to pick the right Maindex Expert tool for the task.
 
 | Goal | Tool |
 |---|---|
-| Save a single memory | `memory.keep` |
-| Save many memories at once (up to 100) | `memory.bulk_keep` |
-| Replace an outdated memory with a corrected version | `memory.supersede` |
-| Append to or revise an existing memory | `memory.update` |
+| Save a single memory | `memory_keep` |
+| Save many memories at once (up to 100) | `memory_bulk_keep` |
+| Replace an outdated memory with a corrected version | `memory_supersede` |
+| Append to or revise an existing memory | `memory_update` |
 
 **Retrieving knowledge:**
 
 | Goal | Tool |
 |---|---|
-| Find memories by meaning, keywords, or concepts | `memory.search` |
-| List memories filtered by tags, kind, collection, date, etc. | `memory.list` |
-| Get one specific memory by ID | `memory.recall` |
-| Find memories connected by links, shared tags, or collections | `memory.get_related` |
+| Find memories by meaning, keywords, or concepts | `memory_search` |
+| List memories filtered by tags, kind, collection, date, etc. | `memory_list` |
+| Get one specific memory by ID | `memory_recall` |
+| Find memories connected by links, shared tags, or collections | `memory_get_related` |
 
 **Organizing knowledge:**
 
 | Goal | Tool |
 |---|---|
-| Create typed links between memories | `memory.associate` |
-| Create, update, or manage a collection | `collection.manage` |
-| Batch add/remove tags, set canon status, manage collections | `memory.bulk_update` |
-| Soft-delete a memory | `memory.forget` |
+| Create typed links between memories | `memory_associate` |
+| Create, update, or manage a collection | `collection_manage` |
+| Batch add/remove tags, set canon status, manage collections | `memory_bulk_update` |
+| Soft-delete a memory | `memory_forget` |
+| Unlock a passphrase-protected collection | `collection_unlock` |
+
+**System:**
+
+| Goal | Tool |
+|---|---|
+| Report a bug to the Maindex team | `system_report_bug` |
 
 **Resources (read-only context):**
 
@@ -46,38 +53,44 @@ Use this reference to pick the right Maindex Expert tool for the task.
 
 ## Tool Details
 
-### memory.keep
+### memory_keep
 Create a new memory. Always provide a `headline`. Optionally include `body`, `kind`, `canon_status`, `tags`, `collections`, `conversations`, `confidence`, and inline `links`. Not idempotent — calling twice creates two memories.
 
-### memory.search
+### memory_search
 Full-text and semantic search. Supports `search_strategy`: `auto` (default, best available), `lexical`, `semantic`, or `hybrid`. Filters: `tags`, `kind`, `canon_status`, `collection`, `confidence` range, `verification_status`. Returns relevance-ranked results with match context.
 
-### memory.list
+### memory_list
 Structured list/filter. Same filters as search but no free-text query. Use for browsing by criteria: "show me all accepted facts tagged domain:auth" or "list memories in collection my-project updated this week."
 
-### memory.recall
+### memory_recall
 Get a single memory by UUID or short ID. Optionally include `revisions` and `links`.
 
-### memory.associate
+### memory_associate
 Create typed links from one memory to one or more targets. Specify `relation_type` and optional `weight`. Inverse links are auto-created for known types (e.g. `supports` creates `supported_by` on the target).
 
-### memory.get_related
+### memory_get_related
 Discover connections. Provide `memory_id`, `tags`, or `collection` — at least one is required. Optionally filter by `relation_type`.
 
-### collection.manage
+### collection_manage
 Multi-action tool. Actions: `create`, `update`, `delete`, `add_members`, `remove_members`, `list`, `get`. Collections have `name`, `slug`, `description`, `icon`, `color`, and support nesting via `parent_id`.
 
-### memory.supersede
+### memory_supersede
 Atomic replace: creates the new memory, marks the old one `deprecated` with `superseded_by` pointer, and creates a `supersedes` link. Use instead of delete-and-recreate.
 
-### memory.update
+### memory_update
 Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only`. Tags and conversations are additive. Full revision history is preserved.
 
-### memory.bulk_keep
+### memory_bulk_keep
 Create up to 100 memories with shared defaults. Per-item `tags` and `collections` merge with defaults. Auto-links batch members with `mentioned_with` unless `auto_link: false`.
 
-### memory.bulk_update
+### memory_bulk_update
 Batch operations on up to 100 memories: `add_tags`, `remove_tags`, `set_canon_status`, `set_verification_status`, `add_to_collections`, `remove_from_collections`, `merge_metadata`, `add_links`, `forget`.
 
-### memory.forget
+### memory_forget
 Soft-delete (sets status to `deleted`). Restorable. Idempotent.
+
+### collection_unlock
+Unlock locked collections using a passphrase. Locked collections hide their contents from all sessions until explicitly unlocked. Provide the passphrase to unlock for the current session. Idempotent.
+
+### system_report_bug
+Report a bug to the Maindex maintainers. Provide `title`, `description`, `severity` (`critical`, `high`, `medium`, `low`), and `category` (`data_integrity`, `api_error`, `performance`, `auth`, `mcp_protocol`, `search`, `ui`, `other`). Optionally include reproduction steps and error messages.

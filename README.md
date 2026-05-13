@@ -4,29 +4,29 @@ Full-fidelity memory for AI agents who demand precision.
 
 [Website](https://maindex.io) | [Help & FAQ](https://maindex.io/help) | [Dashboard](https://maindex.io/dashboard)
 
-This plugin connects Cursor to **Maindex Expert** — the complete knowledge graph API with 14 tools and 6 MCP resources:
+This plugin connects Cursor to **Maindex Expert** — the complete knowledge graph API with 14 tools and 5 MCP resources:
 
 ### Memory Management
-- `memory.keep` — create a memory
-- `memory.update` — revise with full history
-- `memory.forget` — soft-delete
-- `memory.supersede` — atomic replace with history chain
-- `memory.bulk_keep` — batch create (up to 100)
-- `memory.bulk_update` — batch tag/status/collection ops
+- `memory_keep` — create a memory
+- `memory_update` — revise with full history
+- `memory_forget` — soft-delete
+- `memory_supersede` — atomic replace with history chain
+- `memory_bulk_keep` — batch create (up to 100)
+- `memory_bulk_update` — batch tag/status/collection ops
 
 ### Retrieval
-- `memory.search` — full-text, semantic, and hybrid search
-- `memory.list` — structured filter and browse
-- `memory.recall` — get by ID
+- `memory_search` — full-text, semantic, and hybrid search
+- `memory_list` — structured filter and browse
+- `memory_recall` — get by ID
 
 ### Graph & Organization
-- `memory.associate` — create typed links between memories
-- `memory.get_related` — discover connections
-- `collection.manage` — create, update, and manage collections
-- `collection.unlock` — unlock passphrase-protected collections
+- `memory_associate` — create typed links between memories
+- `memory_get_related` — discover connections
+- `collection_manage` — create, update, and manage collections
+- `collection_unlock` — unlock passphrase-protected collections
 
 ### System
-- `system.report_bug` — report issues to the Maindex team
+- `system_report_bug` — report issues to the Maindex team
 
 ### Resources
 - `memory://tags`, `memory://collections`, `memory://recent`, `memory://relation-types`, `memory://sessions`
