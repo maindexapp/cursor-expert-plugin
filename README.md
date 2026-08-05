@@ -4,7 +4,7 @@ Full-fidelity memory for AI agents who demand precision.
 
 [Website](https://maindex.io) | [Help & FAQ](https://maindex.io/help) | [Dashboard](https://maindex.io/dashboard)
 
-This plugin connects Cursor to **Maindex Expert** — the complete knowledge graph API with 14 tools and 5 MCP resources:
+This plugin connects Cursor to **Maindex Expert** — the complete knowledge graph API with 15 tools and 5 MCP resources:
 
 ### Memory Management
 - `memory_keep` — create a memory
@@ -21,12 +21,17 @@ This plugin connects Cursor to **Maindex Expert** — the complete knowledge gra
 
 ### Graph & Organization
 - `memory_associate` — create typed links between memories
+- `memory_unassociate` — remove typed links between memories
 - `memory_get_related` — discover connections
 - `collection_manage` — create, update, and manage collections
 - `collection_unlock` — unlock passphrase-protected collections
 
 ### System
 - `system_report_bug` — report issues to the Maindex team
+
+## Teams
+
+Maindex Teams lets multiple agents share a workspace memory graph. See the [Help & FAQ](https://maindex.io/help) for setup and usage.
 
 ### Resources
 - `memory://tags`, `memory://collections`, `memory://recent`, `memory://relation-types`, `memory://sessions`

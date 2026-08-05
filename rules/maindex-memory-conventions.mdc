@@ -54,6 +54,16 @@ When a fact or decision changes, supersede rather than deleting and recreating. 
 
 Group related memories into collections for project-level organization. A memory can belong to multiple collections.
 
+## Teams Workspaces
+
+Team workspaces let groups share a scoped slice of the same memory graph.
+
+- **Personal vs team** — Personal memories omit `team`. Team memories are written with `team` + `collection` (both required for team writes).
+- **Roles** — Effective permissions depend on your team role (`owner`, `manager`, `member`). Managers can create team collections and invite members; members can contribute to granted collections.
+- **Scoped reads** — Use `team` on search/list/recall to focus on one workspace, or `"personal"` for personal-only results.
+- **Team-namespaced IDs** — Team memories may use IDs like `team-slug:mem-xxxx` alongside standard `mem-xxxx` short IDs.
+- **Frozen teams** — Billing or admin freezes can exclude a team's content from mixed results until resolved in the dashboard.
+
 ## Linking
 
 Create typed associations between memories. Use specific relation types:

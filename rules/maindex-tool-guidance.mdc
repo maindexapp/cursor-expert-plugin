@@ -3,7 +3,7 @@ description: Quick reference for choosing the right Maindex tool
 alwaysApply: false
 ---
 
-Use this reference to pick the right Maindex Expert tool for the task.
+Use this reference to pick the right Maindex Expert tool for the task. Expert exposes **15 MCP tools** plus 5 read-only resources.
 
 ## Decision Tree
 
@@ -15,6 +15,7 @@ Use this reference to pick the right Maindex Expert tool for the task.
 | Save many memories at once (up to 100) | `memory_bulk_keep` |
 | Replace an outdated memory with a corrected version | `memory_supersede` |
 | Append to or revise an existing memory | `memory_update` |
+| Save into a team collection | `memory_keep` with `team` + `collection` |
 
 **Retrieving knowledge:**
 
@@ -24,13 +25,16 @@ Use this reference to pick the right Maindex Expert tool for the task.
 | List memories filtered by tags, kind, collection, date, etc. | `memory_list` |
 | Get one specific memory by ID | `memory_recall` |
 | Find memories connected by links, shared tags, or collections | `memory_get_related` |
+| Limit reads to a team workspace | `memory_search`, `memory_list`, or `memory_recall` with `team` |
 
 **Organizing knowledge:**
 
 | Goal | Tool |
 |---|---|
 | Create typed links between memories | `memory_associate` |
+| Remove typed links between memories | `memory_unassociate` |
 | Create, update, or manage a collection | `collection_manage` |
+| Create a team collection | `collection_manage` with action `create_team_collection` |
 | Batch add/remove tags, set canon status, manage collections | `memory_bulk_update` |
 | Soft-delete a memory | `memory_forget` |
 | Unlock a passphrase-protected collection | `collection_unlock` |
@@ -51,34 +55,47 @@ Use this reference to pick the right Maindex Expert tool for the task.
 | `memory://relation-types` | Available relation types with descriptions and inverses |
 | `memory://sessions` | Recent interaction sessions |
 
+## Teams Workspaces
+
+Team workspaces share the same memory graph as personal memories but are scoped by team slug and role.
+
+- **`team` filter** — Optional on `memory_search`, `memory_list`, `memory_recall`, and `collection_manage` (list/get). Omit for mixed personal+team results. Use `"personal"` for personal-only.
+- **Team writes** — `memory_keep` requires **both** `team` and `collection` when writing into a team collection.
+- **Team collection moves** — `memory_update` accepts `collection` for a within-team collection move; `memory_id` must be team-namespaced.
+- **Team-namespaced IDs** — Short IDs may be prefixed: `team-slug:mem-xxxx` (accepted everywhere UUIDs and short IDs are accepted).
+- **Team output fields** — Team writes may return `teamSlug`, `effectiveRole`, and `reviewStatus` on the created memory.
+
 ## Tool Details
 
 ### memory_keep
-Create a new memory. Always provide a `headline`. Optionally include `body`, `kind`, `canon_status`, `tags`, `collections`, `conversations`, `confidence`, and inline `links`. Not idempotent — calling twice creates two memories.
+Create a new memory. Always provide a `headline`. Optionally include `body`, `kind`, `canon_status`, `tags`, `collections`, `conversations`, `confidence`, and inline `links`. For team collection writes, provide both `team` (slug) and `collection` (team collection slug). Not idempotent — calling twice creates two memories.
 
 ### memory_search
-Full-text and semantic search. Supports `search_strategy`: `auto` (default, best available), `lexical`, `semantic`, or `hybrid`. Filters: `tags`, `kind`, `canon_status`, `collection`, `confidence` range, `verification_status`. Returns relevance-ranked results with match context.
+Full-text and semantic search. Supports `search_strategy`: `auto` (default, best available), `lexical`, `semantic`, or `hybrid`. Filters: `tags`, `kind`, `canon_status`, `collection`, `confidence` range, `verification_status`, and optional `team`. Returns relevance-ranked results with match context.
 
 ### memory_list
-Structured list/filter. Same filters as search but no free-text query. Use for browsing by criteria: "show me all accepted facts tagged domain:auth" or "list memories in collection my-project updated this week."
+Structured list/filter. Same filters as search but no free-text query. Optional `team` scopes results. Use for browsing by criteria: "show me all accepted facts tagged domain:auth" or "list memories in collection my-project updated this week."
 
 ### memory_recall
-Get a single memory by UUID or short ID. Optionally include `revisions` and `links`.
+Get a single memory by UUID, short ID, or team-namespaced ID (`team-slug:mem-xxxx`). Optionally include `revisions`, `links`, and `follow_chain` (supersession traversal). Optional `team` filter.
 
 ### memory_associate
 Create typed links from one memory to one or more targets. Specify `relation_type` and optional `weight`. Inverse links are auto-created for known types (e.g. `supports` creates `supported_by` on the target).
+
+### memory_unassociate
+Remove typed links. Provide `link_ids` and/or a `from_memory_id` with `targets` (each with `target` and `relation_type`). Does not delete memories — only removes associations. Idempotent for missing links.
 
 ### memory_get_related
 Discover connections. Provide `memory_id`, `tags`, or `collection` — at least one is required. Optionally filter by `relation_type`.
 
 ### collection_manage
-Multi-action tool. Actions: `create`, `update`, `delete`, `add_members`, `remove_members`, `list`, `get`. Collections have `name`, `slug`, `description`, `icon`, `color`, and support nesting via `parent_id`.
+Multi-action tool. Actions: `create`, `create_team_collection`, `update`, `delete`, `add_members`, `remove_members`, `list`, `get`. Collections have `name`, `slug`, `description`, `icon`, `color`, and support nesting via `parent_id`. Use `create_team_collection` with `team` + `name` for team libraries. Optional `team` filter on list/get.
 
 ### memory_supersede
 Atomic replace: creates the new memory, marks the old one `deprecated` with `superseded_by` pointer, and creates a `supersedes` link. Use instead of delete-and-recreate.
 
 ### memory_update
-Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only`. Tags and conversations are additive. Full revision history is preserved.
+Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only`. Tags and conversations are additive. `collection` moves a team-namespaced memory to another collection within the same team. Full revision history is preserved.
 
 ### memory_bulk_keep
 Create up to 100 memories with shared defaults. Per-item `tags` and `collections` merge with defaults. Auto-links batch members with `mentioned_with` unless `auto_link: false`.

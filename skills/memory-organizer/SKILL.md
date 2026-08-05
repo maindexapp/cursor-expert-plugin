@@ -75,9 +75,11 @@ Organize memories into meaningful groups:
 2. Check if appropriate collections already exist via `memory://collections`.
 3. Propose new collections or restructuring of existing ones.
 4. With user approval:
-   - Use `collection_manage` with action `create` to create new collections.
+   - Use `collection_manage` with action `create` to create new personal collections.
+   - Use `collection_manage` with action `create_team_collection` (with `team` + `name`) for team libraries.
    - Use `collection_manage` with action `add_members` to populate them.
    - Use `collection_manage` with action `update` to refine names, descriptions, or hierarchy.
+   - When auditing a team workspace, pass `team` to `memory_list` and `memory_search` to scope results.
 
 ### 6. Review Canon Status
 

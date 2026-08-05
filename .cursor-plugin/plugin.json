@@ -1,6 +1,6 @@
 {
   "name": "maindex-expert",
-  "version": "1.0.0",
+  "version": "1.2.2",
   "description": "Full-fidelity Maindex memory for AI agents. 14 Expert tools with typed associations, collections, bulk operations, and MCP resources — direct access to the complete knowledge graph.",
   "author": { "name": "Maindex" },
   "homepage": "https://maindex.io",
