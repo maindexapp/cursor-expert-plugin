@@ -31,7 +31,7 @@ This plugin connects Cursor to **Maindex Expert** — the complete knowledge gra
 
 ## Teams
 
-Maindex Teams lets multiple agents share a workspace memory graph. See the [Help & FAQ](https://maindex.io/help) for setup and usage.
+Team workspaces let multiple members share a scoped memory graph. Optional `team` on read tools; team writes via `memory_keep` with **both** `team` and `collection`; `collection_manage` action `create_team_collection`; namespaced IDs like `team-slug:mem-xxxx`. See the [Teams guide](https://maindex.io/help/teams/).
 
 ### Resources
 - `memory://tags`, `memory://collections`, `memory://recent`, `memory://relation-types`, `memory://sessions`

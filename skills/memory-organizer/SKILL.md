@@ -47,6 +47,7 @@ Find memories that should be connected but aren't:
 2. Use `memory_search` to find thematically related memories that lack explicit links.
 3. Suggest specific typed associations (e.g. "mem-1a `supports` mem-3f because...").
 4. With user approval, use `memory_associate` to create the links.
+5. To remove obsolete links, use `memory_unassociate` with link IDs or triple mode — never delete memories just to clean up graph edges.
 
 Choose relation types carefully:
 - `supports` / `contradicts` for evidence relationships

@@ -63,7 +63,8 @@ Team workspaces share the same memory graph as personal memories but are scoped 
 - **Team writes** — `memory_keep` requires **both** `team` and `collection` when writing into a team collection.
 - **Team collection moves** — `memory_update` accepts `collection` for a within-team collection move; `memory_id` must be team-namespaced.
 - **Team-namespaced IDs** — Short IDs may be prefixed: `team-slug:mem-xxxx` (accepted everywhere UUIDs and short IDs are accepted).
-- **Team output fields** — Team writes may return `teamSlug`, `effectiveRole`, and `reviewStatus` on the created memory.
+- **Team output fields** — Team writes may return `teamSlug`, `effectiveRole`, and `reviewStatus` on the created memory. Rejected injection-review memories stay readable for managers via the review queue.
+- **Collection grants** — Team writes require grant on the **target collection**. `effectiveRole` on search results is the grant for that collection, not a global team role.
 
 ## Tool Details
 
@@ -77,13 +78,13 @@ Full-text and semantic search. Supports `search_strategy`: `auto` (default, best
 Structured list/filter. Same filters as search but no free-text query. Optional `team` scopes results. Use for browsing by criteria: "show me all accepted facts tagged domain:auth" or "list memories in collection my-project updated this week."
 
 ### memory_recall
-Get a single memory by UUID, short ID, or team-namespaced ID (`team-slug:mem-xxxx`). Optionally include `revisions`, `links`, and `follow_chain` (supersession traversal). Optional `team` filter.
+Get a single memory by UUID, short ID, or team-namespaced ID (`team-slug:mem-xxxx`). Optionally include `include_revisions` (alias `include_history`), `include_links`, `include_deleted`, and `follow_chain` for supersession traversal (`enabled`, `max_depth`, `max_width`, `include_intermediary_bodies`). Optional `team` filter.
 
 ### memory_associate
-Create typed links from one memory to one or more targets. Specify `relation_type` and optional `weight`. Inverse links are auto-created for known types (e.g. `supports` creates `supported_by` on the target).
+Create typed links from one memory to one or more targets. Specify `relation_type` and optional `weight`. Inverse links are auto-created for known types (e.g. `supports` creates `supported_by` on the target). Source and targets must be **active** (not soft-deleted). Team-namespaced IDs use the same collection-grant rules as other team mutations.
 
 ### memory_unassociate
-Remove typed links. Provide `link_ids` and/or a `from_memory_id` with `targets` (each with `target` and `relation_type`). Does not delete memories — only removes associations. Idempotent for missing links.
+Remove typed links (unlink counterpart to `memory_associate`). Prefer `link_ids` (`lnk-*` or UUID). Or use triple mode: `from_memory_id` plus `targets` with `memory_id` + `relation_type`, or `memory_id` + `all_relations: true`. Does not delete or restore memories. Idempotent — missing links appear in `not_found`.
 
 ### memory_get_related
 Discover connections. Provide `memory_id`, `tags`, or `collection` — at least one is required. Optionally filter by `relation_type`.
@@ -92,19 +93,19 @@ Discover connections. Provide `memory_id`, `tags`, or `collection` — at least 
 Multi-action tool. Actions: `create`, `create_team_collection`, `update`, `delete`, `add_members`, `remove_members`, `list`, `get`. Collections have `name`, `slug`, `description`, `icon`, `color`, and support nesting via `parent_id`. Use `create_team_collection` with `team` + `name` for team libraries. Optional `team` filter on list/get.
 
 ### memory_supersede
-Atomic replace: creates the new memory, marks the old one `deprecated` with `superseded_by` pointer, and creates a `supersedes` link. Use instead of delete-and-recreate.
+Atomic replace: creates the new memory, marks the old one `deprecated` with `superseded_by` pointer, and creates a `supersedes` link. `old_memory_id` must be active. Team scope is inferred from the old ID or pass `team` + `collection` for the replacement. Use instead of delete-and-recreate.
 
 ### memory_update
-Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only`. Tags and conversations are additive. `collection` moves a team-namespaced memory to another collection within the same team. Full revision history is preserved.
+Revise an existing memory. Modes: `body_append`, `body_replace`, `headline_replace`, `headline_and_body_replace`, `revision_only` (alias `append_mode`). Tags and conversations are additive. `collection` moves a team-namespaced memory to another collection within the same team. Updating a soft-deleted memory **restores** it (`restoredFromDeleted: true`). Setting `canon_status` to `accepted` auto-clears stale `supersededBy`; pass `superseded_by: null` to clear explicitly. Full revision history is preserved.
 
 ### memory_bulk_keep
 Create up to 100 memories with shared defaults. Per-item `tags` and `collections` merge with defaults. Auto-links batch members with `mentioned_with` unless `auto_link: false`.
 
 ### memory_bulk_update
-Batch operations on up to 100 memories: `add_tags`, `remove_tags`, `set_canon_status`, `set_verification_status`, `add_to_collections`, `remove_from_collections`, `merge_metadata`, `add_links`, `forget`.
+Batch operations on up to 100 memories: `add_tags`, `remove_tags`, `set_kind`, `set_canon_status`, `set_verification_status`, `add_to_collections`, `remove_from_collections`, `merge_metadata`, `add_links`, `forget`, `clear_superseded_by`. Non-`forget` ops on deleted rows restore them (`restoredCount` in the response).
 
 ### memory_forget
-Soft-delete (sets status to `deleted`). Restorable. Idempotent.
+Soft-delete (sets status to `deleted`). Restorable via `memory_update` or bulk update. Idempotent. Accepts team-namespaced IDs when the caller has grant on the memory's team collection.
 
 ### collection_unlock
 Unlock locked collections using a passphrase. Locked collections hide their contents from all sessions until explicitly unlocked. Provide the passphrase to unlock for the current session. Idempotent.

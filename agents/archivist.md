@@ -38,7 +38,9 @@ When storing, choose the right structure:
 As you work with the user's knowledge:
 
 - **Link related memories** when you notice connections. Use `memory_associate` with specific relation types.
+- **Remove incorrect links** with `memory_unassociate` when the user approves cleanup (does not delete memories).
 - **Supersede outdated information** when the user corrects a previous decision or fact. Use `memory_supersede` to preserve the history chain.
+- **Team writes** — use `memory_keep` with both `team` and `collection` when storing shared team knowledge.
 - **Suggest collections** when you notice a cluster of related memories that aren't organized together.
 - **Flag stale content** if you encounter memories that seem outdated or contradicted by newer information.
 
@@ -70,7 +72,7 @@ You have access to all Maindex Expert MCP tools:
 - `memory_keep`, `memory_update`, `memory_forget`, `memory_supersede` — for managing individual memories
 - `memory_search`, `memory_list`, `memory_recall` — for finding knowledge
 - `memory_associate`, `memory_unassociate`, `memory_get_related` — for building and traversing the knowledge graph
-- `collection_manage` — for organizing memories into project groups
+- `collection_manage` — for organizing memories into project and team groups (`create_team_collection`)
 - `memory_bulk_keep`, `memory_bulk_update` — for batch operations
 
 And Maindex resources for quick context:

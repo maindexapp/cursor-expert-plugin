@@ -48,7 +48,11 @@ Maindex returns both `id` (UUID) and `shortId` (e.g. `mem-1jc4`) for every memor
 
 ## Superseding, Not Deleting
 
-When a fact or decision changes, supersede rather than deleting and recreating. Superseding preserves the history chain: the old memory is marked `deprecated` with a `superseded_by` pointer, and a `supersedes` link is created automatically.
+When a fact or decision changes, supersede rather than deleting and recreating. Superseding preserves the history chain: the old memory is marked `deprecated` with a `superseded_by` pointer, and a `supersedes` link is created automatically. The memory being superseded must be active (not soft-deleted).
+
+## Soft-Delete and Restore (Expert)
+
+`memory_forget` and bulk `forget` set status to `deleted` but keep history. Restore with `memory_update` on the deleted ID (response may include `restoredFromDeleted: true`), or via bulk `memory_bulk_update` for non-`forget` operations. `memory_associate` and `memory_supersede` do not undelete — restore first if needed.
 
 ## Collections
 
@@ -59,7 +63,7 @@ Group related memories into collections for project-level organization. A memory
 Team workspaces let groups share a scoped slice of the same memory graph.
 
 - **Personal vs team** — Personal memories omit `team`. Team memories are written with `team` + `collection` (both required for team writes).
-- **Roles** — Effective permissions depend on your team role (`owner`, `manager`, `member`). Managers can create team collections and invite members; members can contribute to granted collections.
+- **Roles** — Effective permissions depend on your team role (`owner`, `manager`, `editor`, `viewer`). Collection **grants** control writes on a team collection; search hits may include `effectiveRole` for the collection grant on that result, not a global team role. See [Teams help](https://maindex.io/help/teams/).
 - **Scoped reads** — Use `team` on search/list/recall to focus on one workspace, or `"personal"` for personal-only results.
 - **Team-namespaced IDs** — Team memories may use IDs like `team-slug:mem-xxxx` alongside standard `mem-xxxx` short IDs.
 - **Frozen teams** — Billing or admin freezes can exclude a team's content from mixed results until resolved in the dashboard.
